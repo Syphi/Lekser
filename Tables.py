@@ -16,7 +16,7 @@ arg_words_table = {'PROGRAM': 501,
                    'TO': 511,
                    'DO': 512}
 
-dm = ['*', '/', '&', 'MOD', ':', ';']
+dm = ['*', '/', '&', 'MOD', ':', ';', '.']
 
 whitespaces = [' ', '\n', '\t', '\r', '\f']
 
@@ -30,4 +30,6 @@ aList = []
 global bList
 bList = []
 
+global cList
+cList = []
 
