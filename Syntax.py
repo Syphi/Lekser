@@ -3,11 +3,16 @@ from Vizualizate import *
 
 class SyntaxScan:
     syntax_tree = Tree("<Procedure>")
+    count = 1
 
     def doscan(self):
         ScanLeks().scan()
         self.program_scan()
-        visualize(self.syntax_tree, 0)
+        print('\n')
+        print('\n')
+        print('::::My Tree:::::')
+        visualize(self.syntax_tree, 1)
+        print('\n')
 
     def program_scan(self):
         leks = bList.pop(0)[1]
@@ -18,20 +23,29 @@ class SyntaxScan:
             self.syntax_tree.add(self.block_scan())
             self.syntax_tree.add(self.tocka())
         else:
+            print("Error in line -", self.count)
             raise SystemExit(0)
+
+    def after_end_error(self):
+        if len(bList) != 0:
+            print("Error in line -", self.count)
+            raise SystemExit(17)
 
     def identifier_scan(self):
         NumberLeks = bList.pop(0)[1]
         if NumberLeks in indeteficator_table.values():
             return NumberLeks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(1)
 
     def tocka_zapata(self):
+        self.count += 1
         leks = bList.pop(0)[1]
         if leks == 59:
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(2)
 
     def tocka(self):
@@ -39,6 +53,7 @@ class SyntaxScan:
         if leks == 46:
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(3)
 
     def dwe_tocki(self):
@@ -46,6 +61,7 @@ class SyntaxScan:
         if leks == 58:
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(3)
 
     def dwe_tocki_ravno(self):
@@ -53,6 +69,7 @@ class SyntaxScan:
         if leks == '301':
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(4)
 
     def BEGIN(self):
@@ -60,6 +77,7 @@ class SyntaxScan:
         if leks == 502:
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(5)
 
     def END(self):
@@ -67,6 +85,7 @@ class SyntaxScan:
         if leks == 503:
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(6)
 
     def FOR(self):
@@ -74,6 +93,7 @@ class SyntaxScan:
         if leks == 509:
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(7)
 
     def ENDFOR(self):
@@ -81,6 +101,7 @@ class SyntaxScan:
         if leks == 510:
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(8)
 
     def TO(self):
@@ -88,14 +109,17 @@ class SyntaxScan:
         if leks == 511:
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(9)
 
     def DO(self):
+        self.count += 1
         leks = bList.pop(0)[1]
         # print(leks)
         if leks == 512:
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(10)
 
     def block_scan(self):
@@ -108,12 +132,13 @@ class SyntaxScan:
             block_list.add(self.END())
             return block_list
         else:
+            print("Error in line -", self.count)
             raise SystemExit(11)
 
     def variable_declaration_scan(self):
         variable_list = Tree("<Variable-Declaration>")
-        leks = bList.pop(0)[1]
-        if leks == 504:
+        if bList[0][1] == 504:
+            leks = bList.pop(0)[1]
             variable_list.add(leks)
             variable_list.add(self.declaration_list_scan())
         return variable_list
@@ -122,10 +147,9 @@ class SyntaxScan:
 
     def declaration_list_scan(self):
         declaration_list = Tree("<Declaration-List>")
-        leks = bList[0][1]
-        if leks in indeteficator_table.values():
+        if bList[0][1] in indeteficator_table.values():
             declaration_list.add(self.declaration_scan())
-            self.declaration_list_scan()
+            declaration_list.add(self.declaration_list_scan())
         return declaration_list
 
     def declaration_scan(self):
@@ -136,8 +160,9 @@ class SyntaxScan:
         if (leks1 == 506) or (leks1 == 507):
             daclaration.add(leks1)
         else:
-            daclaration.add(leks1)
             daclaration.add(self.second_atribute_scan())
+            daclaration.add(leks1)
+        daclaration.add(self.tocka_zapata())
         return daclaration
 
 
@@ -148,6 +173,7 @@ class SyntaxScan:
         elif (leks == 506) or (leks == 507):
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(12)
 
     def second_atribute_scan(self):
@@ -155,6 +181,7 @@ class SyntaxScan:
         if (leks == 506) or (leks == 507):
             return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(13)
 
     def statmant_list_scan(self):
@@ -163,6 +190,7 @@ class SyntaxScan:
         if leks == 509:
             statment_list.add(self.statment_scan())
             statment_list.add(self.statmant_list_scan())
+            return statment_list
         else:
             return statment_list
 
@@ -195,18 +223,17 @@ class SyntaxScan:
 
 
     def expretion_scan(self):
-        expretion_list = Tree("<Expretion-List>")
+        expretion_list = Tree("<Expretion>")
         expretion_list.add(self.multiplier_scan())
         expretion_list.add(self.multiplier_list_scan())
         return expretion_list
 
     def multiplier_scan(self):
-        multiplier_list = Tree("<Multiplier>")
         leks = bList.pop(0)[1]
         if (leks in indeteficator_table.values()) or (leks in cons_table.values()):
-            multiplier_list.add(leks)
-            return multiplier_list
+            return leks
         else:
+            print("Error in line -", self.count)
             raise SystemExit(14)
 
     def multiplier_list_scan(self):
@@ -219,13 +246,11 @@ class SyntaxScan:
         return multiplier_list
 
     def multiplication_instraction_scan(self):
-        multiplier_inst_list = Tree("<Multiplication-Instraction>")
         leks = bList.pop(0)[1]
         if leks == 42 or leks == 47 or leks == 38 or leks == "299":
-            multiplier_inst_list.add(leks)
-            return multiplier_inst_list
+            return leks
         else:
-            print(leks)
+            print("Error in line -", self.count)
             raise SystemExit(15)
 
 

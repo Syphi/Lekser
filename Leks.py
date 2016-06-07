@@ -2,6 +2,7 @@ from Tables import *
 
 class ScanLeks:
     numder_of_stroka = 1
+    rador_stroki = 0
 
     def get_next_sumvol(self, file):
         char = file.read(1)
@@ -14,7 +15,7 @@ class ScanLeks:
         while leksema not in whitespaces:
             if leksema in dm:
                 if word != '':
-                    aList.append((word, self.numder_of_stroka))
+                    aList.append((word, self.numder_of_stroka, self.rador_stroki))
                 if leksema == ':':
                     leksema1 = self.get_next_sumvol(file)
                     if leksema1 == '=':
@@ -23,33 +24,36 @@ class ScanLeks:
                         tell = file.tell()
                         file.seek(tell-1)
                 if leksema != '':
-                    aList.append((leksema, self.numder_of_stroka))
+                    aList.append((leksema, self.numder_of_stroka, self.rador_stroki ))
                 return word
             if leksema == '(':
-                aList.append((leksema, self.numder_of_stroka))
+                aList.append((leksema, self.numder_of_stroka, self.rador_stroki))
                 return leksema
             word += str(leksema)
             leksema = self.get_next_sumvol(file)
+            self.rador_stroki += 1
             if leksema == '\n':
                 self.numder_of_stroka += 1
+                self.rador_stroki = 0
             if leksema == "":
                 return None
         if word != '':
-            aList.append((word, self.numder_of_stroka))
+            aList.append((word, self.numder_of_stroka, self.rador_stroki))
         return word
 
     def scan(self):
+        f = input("Enter name of your file - ")
         indet = 1001
         const = 601
         z = -1
-        with open('project.txt', 'r') as file:
+        with open(f, 'r') as file:
             while True:
                 l = self.get_next_word(file)
                 if l is None:
                     break
             j = len(aList)
             for i in range(j):
-                if i > z:
+                if i >= z:
                     leksema = aList[i][0]
                     k = 0
                     if leksema in arg_words_table:
@@ -69,18 +73,21 @@ class ScanLeks:
                         leksema1 = aList[i+1][0]
                         if leksema1 == "*":
                             k = i + 2
+                            if (k+1 > j):
+                                bList.append(("Comment Error", aList[i][1], aList[i][2]))
+                                break
                             for z in range(k, j):
-                                if aList[z][0] == "*":
-                                    if aList[z+1][0] == ")":
+                                if aList[z-1][0] == "*":
+                                    if aList[z][0] == ")":
                                         break
                             if z != (j - 1):
                                 z += 1
                             else:
-                                bList.append(("Comment Error", aList[i][1]))
+                                bList.append(("Comment Error", aList[i][1], aList[i][2]))
                                 break
                         else:
                             # bList[i] = "Comment Eror"
-                            bList.append(("Comment Error", aList[i][1]))
+                            bList.append(("Comment Error", aList[i][1], aList[i][2]))
                             break
                     elif leksema[k] in letters:
                         if leksema in indeteficator_table:
@@ -96,6 +103,13 @@ class ScanLeks:
                             if leksema[h] not in digits:
                                 flag = False
                         if flag == True:
+                            if j - i > 2:
+                                leksema1 = aList[i + 1][0]
+                                leksema2 = aList[i + 2][0]
+                                if (leksema1 == ".") and (leksema2[0] in digits):
+                                    leksema = leksema + leksema1 + leksema2
+                                    if z < i:
+                                        z = i + 3
                             if leksema in cons_table:
                                 # bList[i] = cons_table[leksema]
                                 bList.append((leksema, cons_table[leksema]))
@@ -104,10 +118,10 @@ class ScanLeks:
                                 bList.append((leksema, cons_table[leksema]))
                                 const += 1
                         else:
-                            bList.append(("Const Error", aList[i][1]))
+                            bList.append(("Const Error", aList[i][1], aList[i][2]))
                             break
                     else:
-                        bList.append(("Lexical Error", aList[i][1]))
+                        bList.append(("Lexical Error", aList[i][1], aList[i][2]))
                         print(leksema)
                         break
 
@@ -128,5 +142,5 @@ class ScanLeks:
         for y in cons_table:
             print(y, ' = ', cons_table[y])
 
-#
+
 ScanLeks().print_table()
