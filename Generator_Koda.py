@@ -31,7 +31,7 @@ class GeneratorASM:
                 self.generate(tree.nodes[0])
                 self.generate(tree.nodes[1])
         elif rule == "<Declaration>":
-            self.file.write(str(tree.nodes[0]))
+            self.file.write(self.get_key_ident(tree.nodes[0]))
             self.file.write(' DD ')
         elif rule == "<Statment-List>":
             if len(tree.nodes) !=0:
@@ -45,18 +45,22 @@ class GeneratorASM:
             self.generate(tree.nodes[0])
             self.file.write("\n")
             self.file.write("   MOV ")
-            self.file.write(str(self.iterator))
+            self.file.write(self.get_key_ident(self.iterator))
             self.file.write(" , AX\n")
             self.file.write("   MOV    AX,")
             self.generate(tree.nodes[2])
             self.file.write("\n")
-            self.file.write("   CMP    AX,i\n")
+            self.file.write("   CMP    AX,")
+            self.file.write(self.get_key_ident(self.iterator))
+            self.file.write("\n")
             self.file.write("   JL     ?L\n")
             self.file.write(str(self.countr + 1))
             self.file.write("\n")
             self.file.write("   MOV    DX,1\n")
             self.file.write("   MOV    .S+0,DX\n")
-            self.file.write("   SUB    AX,i\n")
+            self.file.write("   SUB    AX,")
+            self.file.write(self.get_key_ident(self.iterator))
+            self.file.write("\n")
             self.file.write("   CWD\n")
             self.file.write("   DIV    .S+0\n")
             self.file.write("   INC    AX\n")
@@ -100,9 +104,15 @@ class GeneratorASM:
             if cons_table[key] == value:
                 return key
 
+    def get_key_ident(self, value):
+        print(value)
+        for key in indeteficator_table.keys():
+            if indeteficator_table[key] == value:
+                print(key)
+                return key
+
+
     def zapysk(self):
-        ScanLeks().print_table()
-        SyntaxScan().doscan()
         self.generate(SyntaxScan.syntax_tree)
 
 

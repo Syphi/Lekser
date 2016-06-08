@@ -103,13 +103,13 @@ class ScanLeks:
                             if leksema[h] not in digits:
                                 flag = False
                         if flag == True:
-                            if j - i > 2:
-                                leksema1 = aList[i + 1][0]
-                                leksema2 = aList[i + 2][0]
-                                if (leksema1 == ".") and (leksema2[0] in digits):
-                                    leksema = leksema + leksema1 + leksema2
-                                    if z < i:
-                                        z = i + 3
+                            # if j - i > 2:
+                            #     leksema1 = aList[i + 1][0]
+                            #     leksema2 = aList[i + 2][0]
+                            #     if (leksema1 == ".") and (leksema2[0] in digits):
+                            #         leksema = leksema + leksema1 + leksema2
+                            #         if z < i:
+                            #             z = i + 3
                             if leksema in cons_table:
                                 # bList[i] = cons_table[leksema]
                                 bList.append((leksema, cons_table[leksema]))
